@@ -19,10 +19,7 @@ import static io.restassured.RestAssured.given;
 public class TestBase {
 
     private static final String BASE_URL = "https://favqs.com/api";
-   // private static final String APP_TOKEN = "7f0ac24fada23c6689a5f54a0bb3a614";
-   // private static String userToken;
-  //  private static String userName = "30400";
-   // private static String userPassword = "0328c9e51f0c";
+
     
     /**
      * Setup API BAse URL and Authenticate user before running tests.
@@ -31,10 +28,7 @@ public class TestBase {
     public static void Setup() {
     	RestAssured.baseURI =  BASE_URL;
         // Authenticate and retrieve user token
-        String userToken = ApiClient.authenticate(
-            System.getenv("FAVQS_USERNAME"), // Read from environment variables
-            System.getenv("FAVQS_PASSWORD")  // Read from environment variables
-        );
+        String userToken = ApiClient.authenticate();
     	
     	 // Install default request & response specifications
         Specifications.installSpecification(

@@ -19,9 +19,15 @@ public class ApiClient {
 	     * @param password User's password.
 	     * @return User-Token required for authentication.
 	     */
-	    public static String authenticate(String username, String password) {
-	        AuthUser authUser = new AuthUser(username, password);
+	    public static String authenticate() {
+	        String username = System.getenv("FAVQS_USERNAME");
+	        String password = System.getenv("FAVQS_PASSWORD");
 
+	        if (username == null || password == null || API_KEY == null) {
+	            throw new RuntimeException("Missing environment variables. Please set FAVQS_API_KEY, FAVQS_USERNAME, and FAVQS_PASSWORD.");
+	        }
+
+	        AuthUser authUser = new AuthUser(username, password);
 	        Response response = given()
 	            .header("Content-Type", "application/json")
 	            .header("Authorization", "Token token=" + API_KEY)
@@ -32,12 +38,6 @@ public class ApiClient {
 	            .extract().response();
 
 	        userToken = response.jsonPath().getString("User-Token");
-
-	        if (userToken == null || userToken.isEmpty()) {
-	            throw new RuntimeException("Authentication failed: User-Token not received. Check credentials.");
-	        }
-
-	        System.out.println("Authenticated! User-Token: " + userToken);
 	        return userToken;
 	    }
 	    
