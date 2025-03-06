@@ -2,6 +2,7 @@ package com.FavQuote.config;
 
 import org.junit.jupiter.api.BeforeAll;
 
+import com.FavQuote.api.ApiClient;
 import com.FavQuote.models.AuthUser;
 
 import io.restassured.RestAssured;
@@ -18,10 +19,10 @@ import static io.restassured.RestAssured.given;
 public class TestBase {
 
     private static final String BASE_URL = "https://favqs.com/api";
-    private static final String APP_TOKEN = "7f0ac24fada23c6689a5f54a0bb3a614";
-    private static String userToken;
-    private static String userName = "30400";
-    private static String userPassword = "0328c9e51f0c";
+   // private static final String APP_TOKEN = "7f0ac24fada23c6689a5f54a0bb3a614";
+   // private static String userToken;
+  //  private static String userName = "30400";
+   // private static String userPassword = "0328c9e51f0c";
     
     /**
      * Setup API BAse URL and Authenticate user before running tests.
@@ -29,34 +30,19 @@ public class TestBase {
     @BeforeAll
     public static void Setup() {
     	RestAssured.baseURI =  BASE_URL;
-    	authenticate(userName, userPassword);
+        // Authenticate and retrieve user token
+        String userToken = ApiClient.authenticate(
+            System.getenv("FAVQS_USERNAME"), // Read from environment variables
+            System.getenv("FAVQS_PASSWORD")  // Read from environment variables
+        );
+    	
     	 // Install default request & response specifications
         Specifications.installSpecification(
             Specifications.requestSpec(BASE_URL),
             Specifications.responseSpecOK200()
         );
+        // Set user token in ApiClient
+        ApiClient.setUserToken(userToken);
     }
-    
-    private static void authenticate(String name, String password) {
-    	//Using Pojo class
-    	AuthUser authUser = new AuthUser(name, password);
-    	
-    	Response response = given()
-    			.header("Content-Type", "application/json")
-    			.header("Authentication", "Token token=" + APP_TOKEN)
-    			.body(authUser)
-    			.when()
-    			.post("/session")
-    			.then()
-    			.extract().response();
-    	
-    	userToken = response.jsonPath().getString("User-Token");
-    	
-    	if(userToken == null || userToken.isEmpty()) 
-    	{
-    		throw new RuntimeException("Authentication failed: User-Token not received. Check credentials.");
-    	}
-    	System.out.println("Authenticated! USer-Token: " + userToken);
-    			
-    }
+
 }
