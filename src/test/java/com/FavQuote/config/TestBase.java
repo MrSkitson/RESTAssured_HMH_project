@@ -30,6 +30,11 @@ public class TestBase {
     public static void Setup() {
     	RestAssured.baseURI =  BASE_URL;
     	authenticate(userName, userPassword);
+    	 // Install default request & response specifications
+        Specifications.installSpecification(
+            Specifications.requestSpec(BASE_URL),
+            Specifications.responseSpecOK200()
+        );
     }
     
     private static void authenticate(String name, String password) {

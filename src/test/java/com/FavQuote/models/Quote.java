@@ -20,4 +20,4 @@ public class Quote {
     public boolean isFavorited() { return favorited; } // Getter 
     public void setFavorited(boolean favorited) { this.favorited = favorited; } // Setter 
 }
-}
+

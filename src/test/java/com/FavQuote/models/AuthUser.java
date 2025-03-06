@@ -1,6 +1,6 @@
 package com.FavQuote.models;
 /**
- * Represents an authentication request payLoad for FavQs API
+ *POJO class. Represents an authentication request payLoad for FavQs API
  */
 public class AuthUser {
 
