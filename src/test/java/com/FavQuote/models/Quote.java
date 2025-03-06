@@ -1,7 +1,11 @@
 package com.FavQuote.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /*
  * POJO class. Represents Quote
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Quote {
 	private int id;
     private String body;

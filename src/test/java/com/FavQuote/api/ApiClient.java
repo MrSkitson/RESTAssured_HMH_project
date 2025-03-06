@@ -1,6 +1,9 @@
 package com.FavQuote.api;
 
+import com.FavQuote.config.Specifications;
 import com.FavQuote.models.AuthUser;
+import com.FavQuote.models.QuoteResponse;
+
 import static io.restassured.RestAssured.given;
 import io.restassured.response.Response;
 
@@ -8,7 +11,7 @@ import io.restassured.response.Response;
  * ApiClient handles authentication and API calls.
  */
 public class ApiClient {
-	
+	 private static final String BASE_URL = "https://favqs.com/api";
 	 private static final String API_KEY = System.getenv("FAVQS_API_KEY"); // Secure API key
 	    private static String userToken;
 
@@ -29,6 +32,7 @@ public class ApiClient {
 
 	        AuthUser authUser = new AuthUser(username, password);
 	        Response response = given()
+	        	.baseUri(BASE_URL)  // Ensure API Base URL is used
 	            .header("Content-Type", "application/json")
 	            .header("Authorization", "Token token=" + API_KEY)
 	            .body(authUser)
@@ -58,6 +62,7 @@ public class ApiClient {
 	     */
 	    public static Response favoriteQuote(int quoteId) {
 	        return given()
+	        	.baseUri(BASE_URL)
 	            .header("Authorization", "Token token=" + API_KEY)
 	            .header("User-Token", userToken)
 	            .header("Content-Type", "application/json")
@@ -75,11 +80,59 @@ public class ApiClient {
 	     */
 	    public static Response unfavoriteQuote(int quoteId) {
 	        return given()
+	        	.baseUri(BASE_URL)
 	            .header("Authorization", "Token token=" + API_KEY)
 	            .header("User-Token", userToken)
 	        .when()
 	            .put("/quotes/" + quoteId + "/unfav")
 	        .then()
 	            .extract().response();
+	    }
+	    
+	    /**
+	     * Fetch a list of quotes and return raw API response.
+	     */
+	    public static Response getQuotesResponse() {
+	        return given()
+	            .header("Authorization", "Token token=" + API_KEY)
+	            .header("User-Token", userToken)
+	        .when()
+	            .get("/quotes")
+	        .then()
+	            .extract().response();
+	    }
+
+	    /**
+	     * Fetch a list of quotes.
+	     */
+	    public static QuoteResponse getQuotes() {
+	        Response response = given()
+	            .baseUri(BASE_URL) //
+	            .header("Authorization", "Token token=" + API_KEY)
+	            .header("User-Token", userToken)
+	        .when()
+	            .get("/quotes")
+	        .then()
+	            .spec(Specifications.responseSpecOK200()) 
+	            .extract().response();
+	        return response.as(QuoteResponse.class); // Convert JSON -> POJO
+	    }
+
+	    /**
+	     * Fetch quotes with an invalid request (example: invalid parameter).
+	     */
+	    public static Response getQuotesWithInvalidParams() {
+	    	Response response = given()
+	    	        .baseUri(BASE_URL)
+	    	        .header("Authorization", "Token token=" + API_KEY)
+	    	        .header("User-Token", userToken)
+	    	        .queryParam("filter", "") // Invalid parameter
+	    	    .when()
+	    	        .get("/quotes")
+	    	    .then()
+	    	        .extract().response();
+
+	    	    System.out.println("Invalid Request Response: " + response.asString());
+	    	    return response;
 	    }
 }
