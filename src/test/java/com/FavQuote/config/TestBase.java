@@ -27,17 +27,12 @@ public class TestBase {
     @BeforeAll
     public static void Setup() {
     	RestAssured.baseURI =  BASE_URL;
+    	  RestAssured.requestSpecification = Specifications.requestSpec(BASE_URL);
         // Authenticate and retrieve user token
         String userToken = ApiClient.authenticate();
         if (userToken == null || userToken.isEmpty()) {
             throw new RuntimeException("User authentication failed! Token not retrieved.");
         }
-
-    	 // Install default request & response specifications
-        Specifications.installSpecification(
-            Specifications.requestSpec(BASE_URL),
-            Specifications.responseSpecOK200()
-        );
         // Set user token in ApiClient
         ApiClient.setUserToken(userToken);
     }

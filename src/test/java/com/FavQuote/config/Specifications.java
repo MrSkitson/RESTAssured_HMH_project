@@ -56,4 +56,14 @@ public class Specifications {
 		RestAssured.requestSpecification = request;
 		RestAssured.responseSpecification = response;
 	}
+    // Request Specification with Headers and Authorization
+	
+    public static RequestSpecification requestWithAuthSpec(String baseURL, String apiToken, String userToken) {
+        return new RequestSpecBuilder()
+                .setBaseUri(baseURL)
+                .addHeader("Authorization", "Token token=" + apiToken)
+                .addHeader("User-Token", userToken)
+                .setContentType(ContentType.JSON)
+                .build();
+    }
 }

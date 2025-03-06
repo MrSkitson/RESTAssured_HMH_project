@@ -10,7 +10,7 @@ public class Quote {
 	private int id;
     private String body;
     private String author;
-    private boolean favorited; // to track favorited status
+    private boolean favorite; // to track favorited status
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -21,7 +21,7 @@ public class Quote {
     public String getAuthor() { return author; }
     public void setAuthor(String author) { this.author = author; }
 
-    public boolean isFavorited() { return favorited; } // Getter 
-    public void setFavorited(boolean favorited) { this.favorited = favorited; } // Setter 
+    public boolean isFavorited() { return favorite; } // Getter 
+    public void setFavorited(boolean favorited) { this.favorite = favorited; } // Setter 
 }
 

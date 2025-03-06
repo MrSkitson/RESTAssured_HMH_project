@@ -61,15 +61,14 @@ public class ApiClient {
 	     * @return API Response.
 	     */
 	    public static Response favoriteQuote(int quoteId) {
-	        return given()
-	        	.baseUri(BASE_URL)
-	            .header("Authorization", "Token token=" + API_KEY)
-	            .header("User-Token", userToken)
-	            .header("Content-Type", "application/json")
+	      return given()
+	    		  .spec(Specifications.requestWithAuthSpec(BASE_URL, API_KEY, userToken))
 	        .when()
 	            .put("/quotes/" + quoteId + "/fav")
 	        .then()
+	        .log().all()
 	            .extract().response();
+	    
 	    }
 
 	    /**
@@ -80,12 +79,11 @@ public class ApiClient {
 	     */
 	    public static Response unfavoriteQuote(int quoteId) {
 	        return given()
-	        	.baseUri(BASE_URL)
-	            .header("Authorization", "Token token=" + API_KEY)
-	            .header("User-Token", userToken)
+	        .spec(Specifications.requestWithAuthSpec(BASE_URL, API_KEY, userToken))
 	        .when()
 	            .put("/quotes/" + quoteId + "/unfav")
 	        .then()
+	        .log().all()
 	            .extract().response();
 	    }
 	    
@@ -94,11 +92,11 @@ public class ApiClient {
 	     */
 	    public static Response getQuotesResponse() {
 	        return given()
-	            .header("Authorization", "Token token=" + API_KEY)
-	            .header("User-Token", userToken)
+	        .spec(Specifications.requestWithAuthSpec(BASE_URL, API_KEY, userToken))
 	        .when()
 	            .get("/quotes")
 	        .then()
+	     
 	            .extract().response();
 	    }
 
@@ -107,9 +105,7 @@ public class ApiClient {
 	     */
 	    public static QuoteResponse getQuotes() {
 	        Response response = given()
-	            .baseUri(BASE_URL) //
-	            .header("Authorization", "Token token=" + API_KEY)
-	            .header("User-Token", userToken)
+	        .spec(Specifications.requestWithAuthSpec(BASE_URL, API_KEY, userToken)) 
 	        .when()
 	            .get("/quotes")
 	        .then()
@@ -121,18 +117,17 @@ public class ApiClient {
 	    /**
 	     * Fetch quotes with an invalid request (example: invalid parameter).
 	     */
-	    public static Response getQuotesWithInvalidParams() {
+	    public static Response getQuotesWithParams() {
 	    	Response response = given()
-	    	        .baseUri(BASE_URL)
-	    	        .header("Authorization", "Token token=" + API_KEY)
-	    	        .header("User-Token", userToken)
-	    	        .queryParam("filter", "") // Invalid parameter
+	    			.spec(Specifications.requestWithAuthSpec(BASE_URL, API_KEY, userToken)) 
+	    	        .queryParam("filter", "funny") // Invalid parameter
 	    	    .when()
 	    	        .get("/quotes")
 	    	    .then()
+	    	    .log().all()
 	    	        .extract().response();
 
-	    	    System.out.println("Invalid Request Response: " + response.asString());
+	    	    System.out.println("Filtered Request Response: " + response.asString());
 	    	    return response;
 	    }
 }
