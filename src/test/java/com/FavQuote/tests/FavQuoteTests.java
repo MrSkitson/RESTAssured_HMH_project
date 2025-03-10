@@ -3,12 +3,16 @@ package com.FavQuote.tests;
 import org.junit.jupiter.api.Test;
 
 import com.FavQuote.api.ApiClient;
+import com.FavQuote.config.ConfigReader;
 import com.FavQuote.config.TestBase;
 import com.FavQuote.config.TestHelpers;
 import com.FavQuote.models.Quote;
 import com.FavQuote.models.QuoteResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeAll;
+
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
@@ -16,7 +20,21 @@ import io.restassured.response.Response;
  * Test class for favoriting and unfavoriting quotes.
  */
 public class FavQuoteTests extends TestBase {
-	
+   
+	private static int validQuoteId;
+    private static int invalidQuoteId;
+    private static int negativeQuoteId;
+
+    /**
+     * Loads test data from config before running tests.
+     */
+    @BeforeAll
+    public static void setupTestData() {
+        validQuoteId = Integer.parseInt(ConfigReader.getProperty("quote.id"));
+        invalidQuoteId = Integer.parseInt(ConfigReader.getProperty("invalid.quote.id"));
+        negativeQuoteId = Integer.parseInt(ConfigReader.getProperty("negative.quote.id"));
+    }
+    
 	 /**
      * Tests favoriting a quote with a valid quote ID.
      * Asserts that the quote is successfully favorited.
@@ -24,8 +42,7 @@ public class FavQuoteTests extends TestBase {
 	@Test
 	public void testFavoriteQuote_Sucess() {
 
-		int quoteId = 4;
-		Response response = ApiClient.favoriteQuote(quoteId);
+		Response response = ApiClient.favoriteQuote(validQuoteId);
 		JsonPath jsonPath = response.jsonPath();
 		boolean isFavorited = jsonPath.getBoolean("user_details.favorite");
 
@@ -41,8 +58,7 @@ public class FavQuoteTests extends TestBase {
      */
 	@Test
 	public void testUnfavoriteQuote_Success() {
-		int quoteId = 4;
-		Response response = ApiClient.unfavoriteQuote(quoteId);
+		Response response = ApiClient.unfavoriteQuote(validQuoteId);
 		Quote quote = response.as(Quote.class);// Convert response into POJO
 
 		TestHelpers.assertStatusCode(response, 200);
@@ -56,7 +72,6 @@ public class FavQuoteTests extends TestBase {
      */
 	@Test
 	public void testFavoriteQuote_InvalidQuoteId() {
-		int invalidQuoteId = 999999; // Non-existent quote ID
 		   Response response = ApiClient.favoriteQuote(invalidQuoteId);       
 	        // Validate response status
 	        TestHelpers.assertStatusCode(response, 404);
@@ -82,7 +97,6 @@ public class FavQuoteTests extends TestBase {
      */
 	@Test
 	public void testUnfavoriteQuote_InvalidQuoteId() {
-		int invalidQuoteId = 212334263; // Non-existent quote ID
 		Response response = ApiClient.unfavoriteQuote(invalidQuoteId);
         // Validate response status
         TestHelpers.assertStatusCode(response, 404);
@@ -94,8 +108,7 @@ public class FavQuoteTests extends TestBase {
      */
 	@Test
 	public void testFavoriteQuote_ResponseHeaders() {
-	    int quoteId = 4;
-	    Response response = ApiClient.favoriteQuote(quoteId);
+	    Response response = ApiClient.favoriteQuote(validQuoteId);
 
 	    TestHelpers.assertStatusCode(response, 200);
 	    assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"),
@@ -108,8 +121,7 @@ public class FavQuoteTests extends TestBase {
      */
 	@Test
 	public void testFavoriteQuote_NegativeId() {
-	    int invalidQuoteId = -1; // Invalid negative ID
-	    Response response = ApiClient.favoriteQuote(invalidQuoteId);
+	    Response response = ApiClient.favoriteQuote(negativeQuoteId);
 	    
 	    TestHelpers.assertStatusCode(response, 404);
 	}
