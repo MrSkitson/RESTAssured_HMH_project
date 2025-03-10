@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.FavQuote.api.ApiClient;
+import com.FavQuote.config.ConfigReader;
 import com.FavQuote.config.TestBase;
 import com.FavQuote.config.TestHelpers;
 import com.FavQuote.models.Quote;
@@ -44,14 +45,12 @@ public class ListQuotesTests extends TestBase {
 	 */
 	@Test
 	public void testGetListQuotes_ValidateResponseBody() {
-		QuoteResponse quoteResponse = ApiClient.getQuotes();
+	    QuoteResponse quoteResponse = ApiClient.getQuotes();
 
-		// Validate response structure
-		assertNotNull(quoteResponse, "Response body should not be null");
-		assertNotNull(quoteResponse.getQuotes(), "Quotes list should not be null");
-		assertTrue(quoteResponse.getQuotes().size() > 0, "Quotes list should not be empty");
+	    assertNotNull(quoteResponse, "Response body should not be null");
+	    assertNotNull(quoteResponse.getQuotes(), "Quotes list should not be null");
+	    assertTrue(quoteResponse.getQuotes().size() > 0, "Quotes list should not be empty");
 
-		// Validate first quote's data (assuming at least one quote exists)
 		Quote firstQuote = quoteResponse.getQuotes().get(0);
 		assertNotNull(firstQuote.getBody(), "Quote body should not be null");
 		assertNotNull(firstQuote.getAuthor(), "Quote author should not be null");

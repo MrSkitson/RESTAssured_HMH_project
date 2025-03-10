@@ -18,7 +18,7 @@ import static io.restassured.RestAssured.given;
 
 public class TestBase {
 
-    private static final String BASE_URL = "https://favqs.com/api";
+    private static final String BASE_URL = ConfigReader.getProperty("base.url");
 
     
     /**
